@@ -1,0 +1,60 @@
+# Contributor: Matthew5pl <matteofo06@gmail.com>
+# Maintainer: NotLugozzi <thomas.bassi@outlook.it>
+# Reference: <https://postmarketos.org/devicepkg>
+# mesa-dri-swrast
+pkgname=device-xiaomi-onclite
+pkgdesc="Xiaomi Redmi 7"
+pkgver=2
+pkgrel=2
+url="https://postmarketos.org"
+license="MIT"
+arch="aarch64"
+options="!check !archcheck"
+depends="
+	linux-xiaomi-onclite
+	mkbootimg
+	postmarketos-base
+	mesa-dri-gallium
+	msm-fb-refresher
+"
+makedepends="devicepkg-dev"
+subpackages="
+		$pkgname-nonfree-firmware:nonfree_firmware
+		$pkgname-kernel-downstream:kernel_downstream
+		"
+source="
+	deviceinfo
+	fb.modes
+	30-gpu-firmware.files
+	"
+
+build() {
+	devicepkg_build $startdir $pkgname
+}
+
+package() {
+	devicepkg_package $startdir $pkgname
+	install -Dm0644 "$srcdir"/fb.modes "$pkgdir"/etc/fb.modes
+	#install -Dm0644 "$srcdir"/30-gpu-firmware.files "$pkgdir"/etc/postmarketos-mkinitfs/files/30-gpu-firmware.files
+}
+
+nonfree_firmware() {
+	pkgdesc="Wi-Fi, ADSP Firmware"
+	depends="firmware-xiaomi-onclite wcnss-wlan adsp-audio pulseaudio pulseaudio-alsa alsa-plugins-pulse alsa-utils"
+	mkdir "$subpkgdir"
+}
+
+kernel_downstream() {
+	pkgdesc="Downstream kernel"
+	depends="linux-xiaomi-onclite"
+	devicepkg_subpackage_kernel $startdir $pkgname $subpkgname
+}
+
+
+
+
+sha512sums="
+9fc1139a4fc3d010adfed80009de952b3b8a9650caaac088b1c1ae8ae66919387cfa62931a64b4529b7a602b7453a9dbb5ef3bf630fa0bdee40882f773db8221  deviceinfo
+fea464d5b8f5691fe4db178b0fd6dea6f86d112a486670ab897e527ee8fdfc4dfa2657c13a9c2db4ed564cb4f29f36b0e7cd0c9339d3bba9f3fd4c699cf9bddd  fb.modes
+217af9d8bed7e511fe3f6ec993655d51d35814d453de1752128d7438b1c2cd7abf0deb22f1db881536d37b6e735e679d5e19328ea119d67785f4d0fa42daa0dc  30-gpu-firmware.files
+"

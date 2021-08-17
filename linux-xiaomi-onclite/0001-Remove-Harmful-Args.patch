@@ -1,0 +1,43 @@
+From f286195d446189e01e64d5ed1839cd818db1e7b1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Eralp=20=C3=87elebi?= <eralp_celebi@hotmail.com>
+Date: Wed, 23 Jun 2021 19:22:54 +0300
+Subject: [PATCH] Added stub for removing harmful cmdline options.
+
+This change is needed in order to remove cmdline options that is harmful to PostmarketOS. This patch is mostly based on Alexey Min <alexey.min@gmail.com> 's work.
+---
+ drivers/of/fdt.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+index da21ae07ddfb..7d6ea6e0f7fd 100644
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -1147,6 +1147,28 @@ int __init early_init_dt_scan_chosen(unsigned long node, const char *uname,
+ 	}
+ 
+ 	pr_debug("Command line is: %s\n", (char*)data);
++	
++	#ifdef CONFIG_CMDLINE_DROP_DANGEROUS_ANDROID_OPTIONS
++	
++	pr_err("Removing harmful cmdline options....");
++	cmdline = strstr((const char *)data, "skip_initramfs");
++	
++	if (cmdline)
++		*cmdline = '_';
++	
++	cmdline = strstr((const char *)data, "root=");
++	
++	if (cmdline)
++		*cmdline = '_';
++	
++	cmdline = strstr((const char *)data, "init=");
++	
++	if (cmdline)
++		*cmdline = '_';
++	
++	pr_err("Current cmdline is: %s\n", (char*)data);
++	
++	#endif
+ 
+ #ifdef CONFIG_BOOT_INFO
+ 	early_init_dt_check_for_powerup_reason(node);

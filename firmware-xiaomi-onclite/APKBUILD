@@ -1,0 +1,52 @@
+pkgname=firmware-xiaomi-onclite
+pkgver=1
+pkgrel=1
+pkgdesc="Firmware for Xiaomi Redmi 7"
+url="https://postmarketos.org"
+arch="aarch64"
+license="proprietary"
+depends="wcnss-wlan adsp-audio"
+_repository="firmware-xiaomi-onclite"
+_commit="a86b9b5105998b87f8615e73bede85a1ccd46d13"
+source="$pkgname-$_commit.tar.gz::https://github.com/Vin4ter/firmware-xiaomi-onclite/archive/$_commit.tar.gz"
+options="!strip !check !archcheck !spdx"
+builddir="$srcdir/firmware-xiaomi-onclite-$_commit"
+
+_fwdir="/lib/firmware/postmarketos"
+
+package() {
+	echo $source
+
+	# Modem firmware
+	#install -Dm0644 modem/mba.mbn -t "$pkgdir/$_fwdir"
+	#install -Dm0644 modem/modem.* -t "$pkgdir/$_fwdir"
+
+	# ADSP firmware
+	install -Dm0644 adsp/adsp.* -t "$pkgdir/$_fwdir"
+
+	# GPU and video acceleration firmwares
+	#install -Dm0644 gpu/a225_pfp.fw -t "$pkgdir/$_fwdir"
+	#install -Dm0644 gpu/a225_pm4.fw -t "$pkgdir/$_fwdir"
+	#install -Dm0644 gpu/a225p5_pm4.fw -t "$pkgdir/$_fwdir"
+	#install -Dm0644 gpu/a300_pfp.fw -t "$pkgdir/$_fwdir"
+	#install -Dm0644 gpu/a300_pm4.fw -t "$pkgdir/$_fwdir"
+	#install -Dm0644 gpu/a330_pfp.fw -t "$pkgdir/$_fwdir"
+	#install -Dm0644 gpu/a330_pm4.fw -t "$pkgdir/$_fwdir"
+	#install -Dm0644 gpu/a420_pfp.fw -t "$pkgdir/$_fwdir"
+	#install -Dm0644 gpu/a420_pm4.fw -t "$pkgdir/$_fwdir"
+	install -Dm0644 gpu/a5* -t "$pkgdir/$_fwdir"
+	#install -Dm0644 gpu/a530* -t "$pkgdir/$_fwdir"
+	install -Dm0644 gpu/venus.* -t "$pkgdir/$_fwdir"
+
+	# Wifi/BT firmware
+	install -Dm0644 wcnss/WCNSS_cfg.dat -t "$pkgdir/$_fwdir"/wlan/prima
+	install -Dm0644 wcnss/WCNSS_qcom_cfg.ini -t "$pkgdir/$_fwdir"/wlan/prima
+	install -Dm0644 wcnss/WCNSS_qcom_wlan_nv.bin -t "$pkgdir/$_fwdir"/wlan/prima
+	install -Dm0644 wcnss/wcnss.* -t "$pkgdir/$_fwdir"
+	# cmnlib64 and cmnlib
+	install -Dm0644 cmnlib/cmnlib.* -t "$pkgdir/$_fwdir"
+}
+
+sha512sums="
+ff2cdb22af2e1d9f405df7e42e060efc62edf2dd63527aaf605e02863ff9893713119dd7a2aac3dc1a54d323a2c276a29b5c85a4025c05d413812e5a783b189a  firmware-xiaomi-onclite-a86b9b5105998b87f8615e73bede85a1ccd46d13.tar.gz
+"

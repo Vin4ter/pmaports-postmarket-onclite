@@ -1,0 +1,59 @@
+# Reference: <https://postmarketos.org/vendorkernel>
+# Kernel config based on: arch/arm64/configs/(CHANGEME!)
+
+pkgname=linux-xiaomi-onclite
+pkgver=4.9.273
+pkgrel=0
+pkgdesc="linux-xiaomi-kernel"
+arch="aarch64"
+_carch="arm64"
+_flavor="xiaomi-onclite"
+url="https://kernel.org"
+license="GPL-2.0-only"
+options="!strip !check !tracedeps pmb:cross-native"
+makedepends="
+	bash
+	bc
+	bison
+	devicepkg-dev
+	flex
+	openssl-dev
+	perl
+"
+
+# Source
+_repository="android_kernel_xiaomi_onclite"
+_commit="2c7c6c06c71db0a982b83e1d709a25ef587d3dd6"
+_config="config-$_flavor.$arch"
+source="
+	$pkgname-$_commit.tar.gz::https://github.com/LineageOS/$_repository/archive/$_commit.tar.gz
+	0001-Remove-Harmful-Args.patch
+	0002-Harmful-Arg-Kconfig.patch
+	0006-mdss-panel-to-fb-var.patch
+	$_config"
+
+builddir="$srcdir/$_repository-$_commit"
+_outdir="out"
+
+prepare() {
+	default_prepare
+	. downstreamkernel_prepare
+}
+
+build() {
+	unset LDFLAGS
+	make O="$_outdir" ARCH="$_carch" CC="${CC:-gcc}" \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-postmarketOS"
+}
+
+package() {
+	downstreamkernel_package "$builddir" "$pkgdir" "$_carch" "$_flavor" "$_outdir"
+}
+
+sha512sums="
+fa74a34f978bdfea66951f1f8785a5f9dd5872d5f0e6a88ec2c6dbb55553eea80580416ca9f4494a586c3cac315d28af11019e0d5c6995e5d803a7dcee8f7ef6  linux-xiaomi-onclite-2c7c6c06c71db0a982b83e1d709a25ef587d3dd6.tar.gz
+d1eec9167f5d37e2b9b12132b7a051e1fb612ca0b8bbfec01cb710bffd9aaa122acc0d3a6c3bfe7a780913f74ceae42435b6beeb2beb4cb354847e17bf34b0df  0001-Remove-Harmful-Args.patch
+74d00261f0de5f05564202cb04ffa3a05a41517ece7eb6d66dfbe02642407d34a1166f3f042d7b0a9d663de89560f79453aa8e977b0c3b5cda0d25fb088c744f  0002-Harmful-Arg-Kconfig.patch
+d5b868c64b8ebddcf74cb3aa478f30f0897af1e14e4fc42d977921104a6c568cc0bf36fc8a3b0f538cd3ca2ebf59244fdf23186a903259e5acc14d1c4ef4ccc3  0006-mdss-panel-to-fb-var.patch
+7ffa9156850b1c039d016187c95941911ee6f0b6a6e6f570d57a5e20a9aaf85a3928d6bf192633f1b7d579706c8540af70ea2b65ea03d9821dee1237cc8d0a55  config-xiaomi-onclite.aarch64
+"
